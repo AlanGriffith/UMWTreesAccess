@@ -8,6 +8,38 @@
  **************************************************************************************************/
 
 body {
-    background: black;
+    background-color: navy;
+    color: navy;
+    font-family: Verdana, sans-serif;
+}
+
+.card {
+    height: 800px;
+    margin: 50px auto;
+    min-height: 500px !important;
+    min-width: 500px !important;
+    overflow: hidden;
+    resize: both;
+    width: 95%;
+}
+
+.card-header {
+    height: 100px;
+}
+
+.card-body {
+
+}
+
+.card-footer {
+    height: 100px;
+    text-align: right;
+}
+
+.warning {
+    background-color: maroon;
     color: white;
+    font-weight: bold;
+    padding: 10px;
+    text-align: center;
 }
