@@ -28,6 +28,12 @@ body {
     min-height: 100px;
 }
 
+.card-header img {
+    float: right;
+    height: 50px;
+    width: 50px;
+}
+
 .card-body {
     height: 1px;
     padding: 0;
