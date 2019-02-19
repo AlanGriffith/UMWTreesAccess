@@ -25,15 +25,23 @@ body {
 
 .card-header {
     height: 100px;
+    min-height: 100px;
 }
 
 .card-body {
-
+    height: 1px;
+    padding: 0;
+    width: 100%;
 }
 
 .card-footer {
-    height: 100px;
-    text-align: right;
+    display: flex;
+    height: 50px;
+    min-height: 50px;
+}
+
+.spacer {
+    flex: 1;
 }
 
 .warning {
@@ -42,4 +50,10 @@ body {
     font-weight: bold;
     padding: 10px;
     text-align: center;
+}
+
+#map {
+    border: none;
+    height: 100%;
+    width: 100%;
 }
