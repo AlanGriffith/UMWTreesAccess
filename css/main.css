@@ -51,7 +51,7 @@ body {
 }
 
 .warning {
-    background-color: maroon;
+    background-color: crimson;
     color: white;
     font-weight: bold;
     padding: 10px;

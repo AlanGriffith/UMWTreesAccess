@@ -20,9 +20,6 @@
     <script src="js/main.js" defer></script>
 </head>
 <body>
-    <noscript>
-        <h6 class="warning"><strong>This page requires JavaScript to work!</strong></h6>
-    </noscript>
     <main class="card">
         <section class="card-header">
             <img src="img/umw_logo.png" alt="UMW logo">
@@ -30,7 +27,10 @@
             <h6 class="card-text">Map Data Accessibility Project</h6>
         </section>
         <section class="card-body">
-            <iframe id="map" src="https://arcgis.com/apps/View/index.html?appid=6b6a075eca8d4899958fb273710a6806"></iframe>
+            <noscript>
+                <h6 class="warning"><strong>This map requires JavaScript to work!</strong></h6>
+            </noscript>
+            <iframe id="map" :src="map_src"></iframe>
         </section>
         <section class="card-footer">
             <h6 class="card-text">Version 1.0a</h6>
