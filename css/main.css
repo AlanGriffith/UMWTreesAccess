@@ -13,7 +13,7 @@ body {
     font-family: Verdana, sans-serif;
 }
 
-.card {
+main.card {
     height: 800px;
     margin: 50px auto;
     min-height: 500px !important;
@@ -30,6 +30,7 @@ body {
 }
 
 .card-body {
+    height: 1px;
     padding: 0;
 }
 
@@ -53,4 +54,15 @@ body {
     border: 2px solid navy;
     height: 100%;
     width: 100%;
+}
+
+#popup {
+    background-color: lightgray;
+    border: 2px solid navy;
+    color: navy;
+    display: none;
+    padding: 5px;
+    position: absolute;
+    text-align: center;
+    width: 150px;
 }

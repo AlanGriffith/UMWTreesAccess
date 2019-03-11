@@ -7,36 +7,40 @@
  - Spring 2019
 --------------------------------------------------------------------------------------------------->
 <!doctype html>
-<html lang="en">
+<html aria-label="University of Mary Washington Map Data Accessibility Project" lang="en">
 <head>
     <meta charset="utf-8">
     <title>Map Data Accessibility Project</title>
     <link href="img/umw_logo.png" type="image/png" rel="icon">
-    <link href="css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+    <link href="https://js.arcgis.com/3.27/esri/css/esri.css" type="text/css" rel="stylesheet">
     <link href="css/main.css" type="text/css" rel="stylesheet">
-    <script src="js/jquery.slim.min.js" defer></script>
-    <script src="js/bootstrap.bundle.min.js" defer></script>
-    <script src="js/vue.min.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" defer></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js" defer></script>
+    <script src="https://js.arcgis.com/3.27/" defer></script>
     <script src="js/main.js" defer></script>
 </head>
 <body>
     <main class="card">
-        <section class="card-header">
-            <img src="img/umw_logo.png" alt="UMW logo">
-            <h3 class="card-text">University of Mary Washington</h3>
-            <h6 class="card-text">Map Data Accessibility Project</h6>
-        </section>
-        <section class="card-body">
+        <header tabindex="1" aria-label="University of Mary Washington Map Data Accessibility Project" class="card-header">
+            <img tabindex="-1" src="img/umw_logo.png" alt="UMW logo">
+            <h3 tabindex="-1" class="card-text">University of Mary Washington</h3>
+            <h6 tabindex="-1" class="card-text">Map Data Accessibility Project</h6>
+        </header>
+        <section tabindex="1" aria-label="Map viewer" class="card-body">
             <noscript>
-                <h6 class="warning"><strong>This map requires JavaScript to work!</strong></h6>
+                <h6 tabindex="1" class="warning"><strong>This map requires JavaScript to work!</strong></h6>
             </noscript>
-            <iframe :src="map_src" id="map"></iframe>
+            <div tabindex="-1" id="map"></div>
+            <div tabindex="-1" aria-live="assertive" id="popup" class="card">
+                <h6 tabindex="-1" role="definition">A tree.</h6>
+            </div>
         </section>
-        <section class="card-footer">
-            <h6 class="card-text">Version 1.0a</h6>
+        <footer tabindex="1" aria-label="Version 1.0a. &copy; 2019 University of Mary Washington" class="card-footer">
+            <h6 tabindex="-1" class="card-text">Version 1.0a</h6>
             <span class="spacer"></span>
-            <h6 class="card-text">&copy; 2019 University of Mary Washington</h6>
-        </section>
+            <h6 tabindex="-1" class="card-text">&copy; 2019 University of Mary Washington</h6>
+        </footer>
     </main>
 </body>
 </html>
