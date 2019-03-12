@@ -14,6 +14,7 @@ body {
 }
 
 main.card {
+    background-color: lightgray;
     height: 800px;
     margin: 50px auto;
     min-height: 500px !important;
@@ -51,6 +52,7 @@ main.card {
 }
 
 #map {
+    background-color: white;
     border: 2px solid navy;
     height: 100%;
     width: 100%;
@@ -62,4 +64,20 @@ main.card {
 
 .esri-popup {
     width: 300px;
+}
+
+.esri-popup__main-container,
+.esri-popup__button,
+.esri-popup__icon,
+.esri-popup__pointer-direction,
+.esri-widget {
+    background-color: lightgray !important;
+    color: navy !important;
+}
+
+.esri-popup__button:hover,
+.esri-popup__icon:hover,
+.esri-icon:hover,
+.esri-widget:hover {
+    font-weight: bold;
 }
