@@ -56,13 +56,10 @@ main.card {
     width: 100%;
 }
 
-#popup {
-    background-color: lightgray;
-    border: 2px solid navy;
-    color: navy;
-    display: none;
-    padding: 5px;
-    position: absolute;
-    text-align: center;
-    width: 150px;
+/**********************
+ * ArcGIS API config. *
+ **********************/
+
+.esri-popup {
+    width: 300px;
 }
