@@ -9,7 +9,7 @@
 
 "use strict";
 
-const FEATURE_LAYER = "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/UMW_woodlots_online_manage_WFL1/FeatureServer/0";
+const FEATURE_LAYER = "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Heritage_Online_Manage_noedit_WFL1/FeatureServer/0";
 const MAP_CENTER = [-77.477, 38.305];
 const MAP_ZOOM = 18;
 
@@ -17,7 +17,7 @@ require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], function
     let features = new FeatureLayer({
         url: FEATURE_LAYER,
         popupTemplate: {
-            title: "<h6 role='definition' aria-live='assertive'>This is a {commonname}.</h6>"
+            title: "<h6 role='definition' aria-live='assertive'>This is a {Common_Name}.</h6>"
         }
     });
 
@@ -59,7 +59,7 @@ require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], function
             };
 
             view.popup.features = [tree];
-            view.popup.title = `<h6 role="definition" aria-live="assertive">This is a ${tree.attributes.commonname}.</h6>`;
+            view.popup.title = `<h6 role="definition" aria-live="assertive">This is a ${tree.attributes.Common_Name}.</h6>`;
             view.popup.location = loc;
             view.popup.visible = true;
 
