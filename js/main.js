@@ -9,9 +9,13 @@
 
 "use strict";
 
+const FEATURE_LAYER = "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/UMW_woodlots_online_manage_WFL1/FeatureServer/0";
+const MAP_CENTER = [-77.477, 38.305];
+const MAP_ZOOM = 18;
+
 require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], function(Map, MapView, FeatureLayer) {
-    let featureLayer = new FeatureLayer({
-        url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/UMW_woodlots_online_manage_WFL1/FeatureServer/0",
+    let features = new FeatureLayer({
+        url: FEATURE_LAYER,
         popupTemplate: {
             title: "<h6 role='definition' aria-live='assertive'>This is a {commonname}.</h6>"
         }
@@ -19,24 +23,24 @@ require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], function
 
     let map = new Map({
         basemap: "hybrid",
-        layers: [featureLayer]
+        layers: [features]
     });
 
     let view = MapView({
         map: map,
         container: "map",
-        center: [-77.477, 38.305],
-        zoom: 18
+        center: MAP_CENTER,
+        zoom: MAP_ZOOM
     });
 
     let tree_pos = null;
 
-    $("section").keyup(function(event) {
+    $("#map").keyup(function(event) {
         if (event.which !== 13) {
             return;
         }
 
-        featureLayer.queryFeatures().then(function(results) {
+        features.queryFeatures().then(function(results) {
             if (tree_pos === null) {
                 tree_pos = 0
             }
@@ -54,6 +58,7 @@ require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], function
                 longitude: tree.geometry.longitude
             };
 
+            view.popup.features = [tree];
             view.popup.title = `<h6 role="definition" aria-live="assertive">This is a ${tree.attributes.commonname}.</h6>`;
             view.popup.location = loc;
             view.popup.visible = true;
