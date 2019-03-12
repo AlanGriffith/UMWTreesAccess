@@ -9,57 +9,53 @@
 
 "use strict";
 
-const FEATURE_LAYER = "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/UMW_woodlots_online_manage_WFL1/FeatureServer/0";
-const MAP_CONFIG = {
-    basemap: "hybrid",
-    center: [-77.4770, 38.3055],
-    zoom: 19
-};
-
-function showPopup(event) {
-    let tree = $(event.target);
-    let popup = $("#popup");
-    let popup_text = $("#popup h6");
-
-    let tree_pos = tree.offset();
-    popup.css({
-        left:  tree_pos.left - popup.width()/4,
-        top: tree_pos.top - popup.height()
+require(["esri/Map", "esri/views/MapView", "esri/layers/FeatureLayer"], function(Map, MapView, FeatureLayer) {
+    let featureLayer = new FeatureLayer({
+        url: "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/UMW_woodlots_online_manage_WFL1/FeatureServer/0",
     });
 
-    let tree_color = tree.attr("fill");
-    if (tree_color === "rgb(255, 255, 0)") {
-        popup_text.text("A mimosa tree.");
-    }
-    else if (tree_color === "rgb(85, 255, 0)") {
-        popup_text.text("A tree of heaven.");
-    }
-    else {
-        popup_text.text("A tree.");
-    }
-
-    popup.show();
-}
-
-function hidePopup() {
-    let popup = $("#popup");
-
-    popup.css({
-        display: "none"
+    let map = new Map({
+        basemap: "hybrid",
+        layers: [featureLayer]
     });
-}
 
-require(["esri/map", "esri/layers/FeatureLayer", "dojo/domReady!"], function(Map, FeatureLayer) {
-    let map = new Map("map", MAP_CONFIG);
-    map.addLayer(new FeatureLayer(FEATURE_LAYER));
+    let view = MapView({
+        map: map,
+        container: "map",
+        center: [-77.4770, 38.3055],
+        zoom: 18
+    });
 
-    map.on("update-end", function() {
-        hidePopup();
+    let tree_pos = null;
 
-        $("circle").each(function() {
-            $(this).attr("tabindex", "0");
+    $("section").keyup(function(event) {
+        if (event.which !== 13) {
+            return;
+        }
 
-            $(this).on("focus click", showPopup);
+        featureLayer.queryFeatures().then(function(results) {
+            if (tree_pos === null) {
+                tree_pos = 0
+            }
+            else if (event.shiftKey && tree_pos > 0) {
+                --tree_pos;
+            }
+            else if (tree_pos < results.features.length) {
+                ++tree_pos;
+            }
+
+            let tree = results.features[tree_pos];
+
+            let loc = {
+                latitude: tree.geometry.latitude,
+                longitude: tree.geometry.longitude
+            };
+
+            view.popup.title = `<h6 tabindex="2" role="definition" aria-live="assertive">This is a ${tree.attributes.commonname}.</h6>`;
+            view.popup.location = loc;
+            view.popup.visible = true;
+
+            view.center = loc;
         });
     });
 });
