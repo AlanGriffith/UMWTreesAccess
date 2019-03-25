@@ -30,11 +30,6 @@ main.card {
     width: 60px;
 }
 
-.card-body {
-    height: 1px;
-    padding: 0;
-}
-
 .card-footer {
     display: flex;
 }
@@ -54,6 +49,10 @@ main.card {
 #map {
     background-color: white;
     border: 2px solid navy;
+}
+
+#map:focus-within {
+    border: 5px solid cyan;
 }
 
 /**********************
