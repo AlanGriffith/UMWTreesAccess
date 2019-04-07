@@ -23,7 +23,71 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
     let features = new FeatureLayer({
         url: FEATURE_LAYER,
         popupTemplate: {
-            title: "<h6 role='definition' aria-live='assertive'>This is a {Common_Name}.</h6>"
+            title: "<h1 aria-label='Tree Number {OBJECTID}' aria-live='assertive'>Tree #{OBJECTID}</h1>",
+//             content: `
+// <ul>
+//     <li tabindex="0"><strong>Location:</strong> {Building}</li>
+//     <li tabindex="0"><strong>Common Name:</strong> {Common_Name}</li>
+//     <li tabindex="0"><strong>Genus Species:</strong> {Botanical_Name}</li>
+//     <li tabindex="0"><strong>Family Name:</strong> {Family}</li>
+//     <li tabindex="0"><strong>Diameter of Trunk in Centimeters:</strong> {DBH}</li>
+//     <li tabindex="0"><strong>Height in Meters:</strong> {height}</li>
+//     <li tabindex="0"><strong>Canopy Width in Meters, North-South:</strong> {Canopy_NS}</li>
+//     <li tabindex="0"><strong>Canopy Width in Meters, East-West:</strong> {Canopy_EW}</li>
+// </ul>
+// `
+            content: [{
+                type: "fields",
+                fieldInfos: [
+                    {
+                        fieldName: "Building",
+                        label: "Location"
+                    },
+                    {
+                        fieldName: "Common_Name",
+                        label: "Common Name"
+                    },
+                    {
+                        fieldName: "Botanical_Name",
+                        label: "Genus Species"
+                    },
+                    {
+                        fieldName: "Family",
+                        label: "Family Name",
+                        format: {
+                            places: 2
+                        }
+                    },
+                    {
+                        fieldName: "DBH",
+                        label: "Diameter of Trunk in Centimeters",
+                        format: {
+                            places: 2
+                        }
+                    },
+                    {
+                        fieldName: "height",
+                        label: "Height in Meters",
+                        format: {
+                            places: 2
+                        }
+                    },
+                    {
+                        fieldName: "Canopy_NS",
+                        label: "Canopy Width in Meters, North-South",
+                        format: {
+                            places: 2
+                        }
+                    },
+                    {
+                        fieldName: "Canopy_EW",
+                        label: "Canopy Width in Meters, East-West",
+                        format: {
+                            places: 2
+                        }
+                    }
+                ]
+            }]
         }
     });
 
@@ -41,12 +105,12 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
 
     document.querySelector("div[role='application']").setAttribute("aria-label", "Accessible Map Viewer");
 
-    let tree_pos = null;
-
     let trees;
     features.queryFeatures().then(results => {
         trees = results.features;
     });
+
+    let tree_pos = null;
 
     view.on("key-up", event => {
         if (event.key !== "Enter") {
@@ -72,7 +136,6 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
 
         view.popup.open({
             features: [tree],
-            title: `<h6 role="definition" aria-live="assertive">This is a ${tree.attributes.Common_Name}.</h6>`,
             updateLocationEnabled: true
         });
     });

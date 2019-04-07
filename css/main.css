@@ -37,22 +37,20 @@ nav {
     background-color: lightgray;
     border-bottom-right-radius: 5px;
     height: 50px;
-    opacity: 0.9;
+    opacity: 0.95;
     position: absolute;
     width: 80%;
     z-index: 1;
 }
 
-.title {
+nav h1 {
+    font-size: 1em;
     margin: 5px;
 }
 
-h1.title {
-    font-size: 1em;
-}
-
-h2.title {
+nav h2 {
     font-size: 0.75em;
+    margin: 5px;
 }
 
 #map {
@@ -74,31 +72,44 @@ h2.title {
  * ESRI API config. *
  ********************/
 
-.esri-popup {
-    width: 300px;
+.esri-zoom {
+    margin-top: 50px;
 }
 
 .esri-popup__header-title {
-    font-size: 2em;
+    margin: 10px;
+    padding: 0;
 }
 
-.esri-popup__main-container,
+.esri-popup__content {
+    margin: 10px 0;
+}
+
+.esri-feature__fields {
+    padding: 0
+}
+
+.esri-feature__field-header {
+    color: navy;
+    font-weight: bold !important;
+    width: 55% !important;
+}
+
+.esri-feature__field-data {
+    color: navy;
+    width: 45% !important;
+}
+
 .esri-popup__button,
-.esri-popup__icon,
 .esri-popup__pointer-direction,
 .esri-widget {
     background-color: lightgray !important;
     color: navy !important;
-    opacity: 0.9;
+    opacity: 0.95;
 }
 
 .esri-popup__button:hover,
 .esri-popup__icon:hover,
-.esri-icon:hover,
-.esri-widget:hover {
+.esri-icon:hover {
     font-weight: bold;
-}
-
-.esri-zoom {
-    margin-top: 50px;
 }
