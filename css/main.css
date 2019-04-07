@@ -18,25 +18,55 @@ body {
     font-family: Verdana, sans-serif;
     height: 100%;
     margin: 0;
-    overflow: hidden;
     width: 100%;
 }
 
-div[role="application"]:focus-within {
+main {
+    height: 100%;
+    width: 100%;
+}
+
+main:focus-within {
     border: 5px solid cyan;
-    height: calc(100% - 26px);
+    height: calc(100% - 10px);
     width: calc(100% - 10px);
 }
 
-.warning {
+nav {
+    background-color: lightgray;
+    border-bottom-right-radius: 5px;
+    height: 50px;
+    opacity: 0.9;
+    position: absolute;
+    width: 80%;
+    z-index: 1;
+}
+
+.title {
+    margin: 5px;
+}
+
+h1.title {
+    font-size: 1em;
+}
+
+h2.title {
+    font-size: 0.75em;
+}
+
+#map {
+    height: 100%;
+    width: 100%;
+}
+
+#warning {
     background-color: crimson;
     color: white;
     font-size: 1em;
     font-weight: bold;
-    margin: 0 auto;
     padding: 10px;
     text-align: center;
-    width: 300px;
+    width: 100%;
 }
 
 /********************
@@ -58,6 +88,7 @@ div[role="application"]:focus-within {
 .esri-widget {
     background-color: lightgray !important;
     color: navy !important;
+    opacity: 0.9;
 }
 
 .esri-popup__button:hover,
@@ -65,4 +96,8 @@ div[role="application"]:focus-within {
 .esri-icon:hover,
 .esri-widget:hover {
     font-weight: bold;
+}
+
+.esri-zoom {
+    margin-top: 50px;
 }

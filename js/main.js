@@ -39,7 +39,7 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
         zoom: MAP_ZOOM
     });
 
-    document.querySelector("div[role='application']").setAttribute("aria-label", "Map Viewer");
+    document.querySelector("div[role='application']").setAttribute("aria-label", "Accessible Map Viewer");
 
     let tree_pos = null;
 
@@ -77,7 +77,7 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
         });
     });
 
-    view.surface.addEventListener("wheel", function(event) {
+    view.surface.addEventListener("wheel", event => {
         event.stopImmediatePropagation();
     }, true);
 });
