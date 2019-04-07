@@ -14,12 +14,19 @@
     <link href="img/umw_logo.png" type="image/png" rel="icon">
     <link href="https://js.arcgis.com/4.10/esri/css/main.css" type="text/css" rel="stylesheet">
     <link href="css/main.css" type="text/css" rel="stylesheet">
-    <script src="https://js.arcgis.com/4.10/" defer></script>
-    <script src="js/main.js" defer></script>
+    <script src="https://js.arcgis.com/4.10/"></script>
+    <script src="js/main.js"></script>
 </head>
-<body id="map" aria-label="Main Window">
+<body>
     <noscript>
-        <h6 class="warning"><strong>This map requires JavaScript to work!</strong></h6>
+        <h6 id="warning"><strong>This map requires JavaScript to work!</strong></h6>
     </noscript>
+    <main>
+        <nav tabindex="1">
+            <h1 class="title">University of Mary Washington</h1>
+            <h2 class="title">Map Data Accessibility Project</h2>
+        </nav>
+        <section id="map" tabindex="1" aria-label="Map"></section>
+    </main>
 </body>
 </html>
