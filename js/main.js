@@ -20,7 +20,7 @@ const INCLUDES = [
 ];
 
 require(INCLUDES, (Map, MapView, FeatureLayer) => {
-    let features = new FeatureLayer({
+    let trees_layer = new FeatureLayer({
         url: FEATURE_LAYER,
         popupTemplate: {
             title: "<h1 aria-label='Tree Number {OBJECTID}' aria-live='assertive'>Tree #{OBJECTID}</h1>",
@@ -93,7 +93,7 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
 
     let map = new Map({
         basemap: "hybrid",
-        layers: [features]
+        layers: [trees_layer]
     });
 
     let view = MapView({
@@ -106,11 +106,36 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
     document.querySelector("div[role='application']").setAttribute("aria-label", "Accessible Map Viewer");
 
     let trees;
-    features.queryFeatures().then(results => {
-        trees = results.features;
-    });
+    let tree_pos;
 
-    let tree_pos = null;
+    function getTrees() {
+        trees_layer.queryFeatures().then(results => {
+            trees = results.features;
+            tree_pos = null;
+        });
+    }
+
+    getTrees();
+
+    function filterTrees() {
+        let building = document.getElementById("building_select").value;
+        if (building === "Any Value") {
+            building = "";
+        }
+
+        let common_name = document.getElementById("commonname_select").value;
+        if (common_name === "Any Value") {
+            common_name = "";
+        }
+
+        let filter = `Building LIKE '%${building}%' AND Common_Name LIKE '%${common_name}%'`;
+        trees_layer.definitionExpression = filter;
+
+        getTrees();
+    }
+
+    document.getElementById("building_select").addEventListener("change", filterTrees);
+    document.getElementById("commonname_select").addEventListener("change", filterTrees);
 
     view.on("key-up", event => {
         if (event.key !== "Enter") {
@@ -122,7 +147,7 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
         if (tree_pos === null) {
             tree_pos = 0
         }
-        else if ((go_back && tree_pos === 0) || (!go_back && tree_pos === trees.length)) {
+        else if ((go_back && tree_pos === 0) || (!go_back && tree_pos === trees.length-1)) {
             return;
         }
         else if (go_back) {

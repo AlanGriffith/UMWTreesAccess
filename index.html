@@ -19,12 +19,37 @@
 </head>
 <body>
     <noscript>
-        <h6 id="warning"><strong>This map requires JavaScript to work!</strong></h6>
+        <h1 id="warning"><strong>This map requires JavaScript to work!</strong></h1>
     </noscript>
     <main>
         <nav tabindex="1">
-            <h1>University of Mary Washington</h1>
-            <h2>Map Data Accessibility Project</h2>
+            <div>
+                <h1>University of Mary Washington</h1>
+                <h2>Map Data Accessibility Project</h2>
+            </div>
+            <div>
+                <fieldset>
+                    <legend>Filter Trees</legend>
+                    <label>
+                        Building:
+                        <select id="building_select">
+                            <option>Any Value</option>
+                            <option>Jepson Science Center</option>
+                            <option>Monroe Hall</option>
+                            <option>Lee Hall</option>
+                        </select>
+                    </label>
+                    <label>
+                        Common Name:
+                        <select id="commonname_select">
+                            <option>Any Value</option>
+                            <option>European hornbeam</option>
+                            <option>Japanese Maple</option>
+                            <option>sugar maple</option>
+                        </select>
+                    </label>
+                </fieldset>
+            </div>
         </nav>
         <section id="map" tabindex="1" aria-label="Map"></section>
     </main>
