@@ -16,10 +16,13 @@ const MAP_ZOOM = 18;
 const INCLUDES = [
     "esri/Map",
     "esri/views/MapView",
-    "esri/layers/FeatureLayer"
+    "esri/layers/FeatureLayer",
+    "esri/widgets/Compass",
+    "esri/widgets/Expand",
+    "esri/widgets/BasemapGallery"
 ];
 
-require(INCLUDES, (Map, MapView, FeatureLayer) => {
+require(INCLUDES, (Map, MapView, FeatureLayer, Compass, Expand, BasemapGallery) => {
     let trees_layer = new FeatureLayer({
         url: FEATURE_LAYER,
         popupTemplate: {
@@ -103,6 +106,26 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
         zoom: MAP_ZOOM
     });
 
+    let compass = new Compass({
+        view: view
+    });
+
+    let basemap_gallery = new BasemapGallery({
+        view: view
+    });
+
+    let bg_expand = new Expand({
+        view: view,
+        content: basemap_gallery
+    });
+    basemap_gallery.watch("activeBasemap", event => {
+        bg_expand.collapse();
+    });
+
+    view.ui.move("zoom", "top-right");
+    view.ui.add(compass, "top-right");
+    view.ui.add(bg_expand, "bottom-right");
+
     document.querySelector("div[role='application']").setAttribute("aria-label", "Accessible Map Viewer");
 
     let trees;
@@ -118,24 +141,32 @@ require(INCLUDES, (Map, MapView, FeatureLayer) => {
     getTrees();
 
     function filterTrees() {
-        let building = document.getElementById("building_select").value;
-        if (building === "Any Value") {
-            building = "";
-        }
-
         let common_name = document.getElementById("commonname_select").value;
         if (common_name === "Any Value") {
             common_name = "";
         }
 
-        let filter = `Building LIKE '%${building}%' AND Common_Name LIKE '%${common_name}%'`;
-        trees_layer.definitionExpression = filter;
+        let genus_species = document.getElementById("genusspecies_select").value;
+        if (genus_species === "Any Value") {
+            genus_species = "";
+        }
+
+        let building = document.getElementById("building_select").value;
+        if (building === "Any Value") {
+            building = "";
+        }
+
+        trees_layer.definitionExpression = `
+Common_Name LIKE '%${common_name}%' AND
+Botanical_Name LIKE '%${genus_species}%' AND
+Building LIKE '%${building}%'`;
 
         getTrees();
     }
 
-    document.getElementById("building_select").addEventListener("change", filterTrees);
     document.getElementById("commonname_select").addEventListener("change", filterTrees);
+    document.getElementById("genusspecies_select").addEventListener("change", filterTrees);
+    document.getElementById("building_select").addEventListener("change", filterTrees);
 
     view.on("key-up", event => {
         if (event.key !== "Enter") {

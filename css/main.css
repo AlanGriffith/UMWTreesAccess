@@ -36,9 +36,9 @@ main:focus-within {
 nav {
     background-color: lightgray;
     border-bottom-right-radius: 5px;
+    margin-right: 200px;
     opacity: 0.95;
     position: absolute;
-    width: 50%;
     z-index: 1;
 }
 
@@ -77,6 +77,7 @@ nav fieldset select {
     border: 1px solid navy;
     border-radius: 2px;
     color: navy;
+    width: 150px
 }
 
 #map {
@@ -98,13 +99,20 @@ nav fieldset select {
  * ESRI API config. *
  ********************/
 
-.esri-zoom {
-    margin-top: 200px;
+.esri-widget * {
+    color: navy !important;
+}
+
+.esri-popup__button,
+.esri-popup__pointer-direction,
+.esri-widget,
+.esri-widget--button {
+    background-color: lightgray !important;
+    opacity: 0.95;
 }
 
 .esri-popup__header-title {
-    margin: 10px;
-    padding: 0;
+    padding: 0 10px;
 }
 
 .esri-popup__content {
@@ -112,30 +120,14 @@ nav fieldset select {
 }
 
 .esri-feature__fields {
-    padding: 0
+    padding: 0;
 }
 
 .esri-feature__field-header {
-    color: navy;
     font-weight: bold !important;
     width: 55% !important;
 }
 
 .esri-feature__field-data {
-    color: navy;
     width: 45% !important;
-}
-
-.esri-popup__button,
-.esri-popup__pointer-direction,
-.esri-widget {
-    background-color: lightgray !important;
-    color: navy !important;
-    opacity: 0.95;
-}
-
-.esri-popup__button:hover,
-.esri-popup__icon:hover,
-.esri-icon:hover {
-    font-weight: bold;
 }
