@@ -17,12 +17,13 @@ const INCLUDES = [
     "esri/Map",
     "esri/views/MapView",
     "esri/layers/FeatureLayer",
+    "esri/widgets/Home",
     "esri/widgets/Compass",
     "esri/widgets/Expand",
     "esri/widgets/BasemapGallery"
 ];
 
-require(INCLUDES, (Map, MapView, FeatureLayer, Compass, Expand, BasemapGallery) => {
+require(INCLUDES, (Map, MapView, FeatureLayer, Home, Compass, Expand, BasemapGallery) => {
     let trees_layer = new FeatureLayer({
         url: FEATURE_LAYER,
         popupTemplate: {
@@ -106,6 +107,10 @@ require(INCLUDES, (Map, MapView, FeatureLayer, Compass, Expand, BasemapGallery) 
         zoom: MAP_ZOOM
     });
 
+    let home = new Home({
+        view: view
+    });
+
     let compass = new Compass({
         view: view
     });
@@ -123,6 +128,7 @@ require(INCLUDES, (Map, MapView, FeatureLayer, Compass, Expand, BasemapGallery) 
     });
 
     view.ui.move("zoom", "top-right");
+    view.ui.add(home, "top-right");
     view.ui.add(compass, "top-right");
     view.ui.add(bg_expand, "bottom-right");
 
