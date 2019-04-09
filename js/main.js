@@ -95,6 +95,32 @@ require(INCLUDES, (Map, MapView, FeatureLayer, Home, Compass, Expand, BasemapGal
         }
     });
 
+    function populateFilterSelect(id, field_name) {
+        trees_layer.queryFeatures({
+            where: `${field_name} IS NOT NULL`,
+            returnGeometry: false,
+            returnDistinctValues: true,
+            orderByFields: [field_name],
+            outFields: [field_name]
+        }).then(results => {
+            let select = document.getElementById(id);
+
+            for (let feature of results.features) {
+                let value = feature.attributes[field_name];
+
+                let option = document.createElement("option");
+                option.value = value;
+                option.innerText = value;
+
+                select.appendChild(option);
+            }
+        });
+    }
+
+    populateFilterSelect("commonname_select", "Common_Name");
+    populateFilterSelect("genusspecies_select", "Botanical_Name");
+    populateFilterSelect("building_select", "Building");
+
     let map = new Map({
         basemap: "hybrid",
         layers: [trees_layer]
@@ -136,40 +162,34 @@ require(INCLUDES, (Map, MapView, FeatureLayer, Home, Compass, Expand, BasemapGal
 
     let trees;
     let tree_pos;
-
-    function getTrees() {
-        trees_layer.queryFeatures().then(results => {
-            trees = results.features;
-            tree_pos = null;
-        });
-    }
-
-    getTrees();
+    trees_layer.queryFeatures().then(results => {
+        trees = results.features;
+        tree_pos = null;
+    });
 
     function filterTrees() {
         view.popup.close();
 
+        let filtered_ids = [];
+
         let common_name = document.getElementById("commonname_select").value;
-        if (common_name === "Any Value") {
-            common_name = "";
-        }
-
         let genus_species = document.getElementById("genusspecies_select").value;
-        if (genus_species === "Any Value") {
-            genus_species = "";
-        }
-
         let building = document.getElementById("building_select").value;
-        if (building === "Any Value") {
-            building = "";
+
+        for (let tree of trees) {
+            if ((common_name === "Any Value" || common_name === tree.attributes["Common_Name"])
+                && (genus_species === "Any Value" || genus_species === tree.attributes["Botanical_Name"])
+                && (building === "Any Value" || building === tree.attributes["Building"])) {
+                filtered_ids.push(tree.attributes["OBJECTID"]);
+            }
         }
 
-        trees_layer.definitionExpression = `
-Common_Name LIKE '%${common_name}%' AND
-Botanical_Name LIKE '%${genus_species}%' AND
-Building LIKE '%${building}%'`;
-
-        getTrees();
+        if (filtered_ids.length > 0) {
+            trees_layer.definitionExpression = `OBJECTID IN (${filtered_ids.join(",")})`;
+        }
+        else {
+            trees_layer.definitionExpression = null;
+        }
     }
 
     document.getElementById("commonname_select").addEventListener("change", filterTrees);
