@@ -141,6 +141,8 @@ require(INCLUDES, (Map, MapView, FeatureLayer, Compass, Expand, BasemapGallery) 
     getTrees();
 
     function filterTrees() {
+        view.popup.close();
+
         let common_name = document.getElementById("commonname_select").value;
         if (common_name === "Any Value") {
             common_name = "";
