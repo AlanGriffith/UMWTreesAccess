@@ -13,7 +13,7 @@ const FEATURE_LAYER = "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest
 const MAP_CENTER = [-77.4770, 38.3055];
 const MAP_ZOOM = 18;
 
-const INCLUDES = [
+require([
     "esri/Map",
     "esri/views/MapView",
     "esri/layers/FeatureLayer",
@@ -21,210 +21,222 @@ const INCLUDES = [
     "esri/widgets/Compass",
     "esri/widgets/Expand",
     "esri/widgets/BasemapGallery"
-];
+], (Map, MapView, FeatureLayer, Home, Compass, Expand, BasemapGallery) => {
 
-require(INCLUDES, (Map, MapView, FeatureLayer, Home, Compass, Expand, BasemapGallery) => {
-    let trees_layer = new FeatureLayer({
-        url: FEATURE_LAYER,
-        popupTemplate: {
-            title: "<h1 aria-label='Tree Number {OBJECTID}' aria-live='assertive'>Tree #{OBJECTID}</h1>",
-//             content: `
-// <ul>
-//     <li tabindex="0"><strong>Location:</strong> {Building}</li>
-//     <li tabindex="0"><strong>Common Name:</strong> {Common_Name}</li>
-//     <li tabindex="0"><strong>Genus Species:</strong> {Botanical_Name}</li>
-//     <li tabindex="0"><strong>Family Name:</strong> {Family}</li>
-//     <li tabindex="0"><strong>Diameter of Trunk in Centimeters:</strong> {DBH}</li>
-//     <li tabindex="0"><strong>Height in Meters:</strong> {height}</li>
-//     <li tabindex="0"><strong>Canopy Width in Meters, North-South:</strong> {Canopy_NS}</li>
-//     <li tabindex="0"><strong>Canopy Width in Meters, East-West:</strong> {Canopy_EW}</li>
-// </ul>
-// `
-            content: [{
-                type: "fields",
-                fieldInfos: [
-                    {
-                        fieldName: "Building",
-                        label: "Location"
-                    },
-                    {
-                        fieldName: "Common_Name",
-                        label: "Common Name"
-                    },
-                    {
-                        fieldName: "Botanical_Name",
-                        label: "Genus Species"
-                    },
-                    {
-                        fieldName: "Family",
-                        label: "Family Name",
-                        format: {
-                            places: 2
-                        }
-                    },
-                    {
-                        fieldName: "DBH",
-                        label: "Diameter of Trunk in Centimeters",
-                        format: {
-                            places: 2
-                        }
-                    },
-                    {
-                        fieldName: "height",
-                        label: "Height in Meters",
-                        format: {
-                            places: 2
-                        }
-                    },
-                    {
-                        fieldName: "Canopy_NS",
-                        label: "Canopy Width in Meters, North-South",
-                        format: {
-                            places: 2
-                        }
-                    },
-                    {
-                        fieldName: "Canopy_EW",
-                        label: "Canopy Width in Meters, East-West",
-                        format: {
-                            places: 2
-                        }
+let trees_layer = new FeatureLayer({
+    url: FEATURE_LAYER,
+    popupTemplate: {
+        title: "<h1 aria-label='Tree Number {OBJECTID}' aria-live='assertive'>Tree #{OBJECTID}</h1>",
+        content: [{
+            type: "fields",
+            fieldInfos: [
+                {
+                    fieldName: "Building",
+                    label: "Location"
+                },
+                {
+                    fieldName: "Common_Name",
+                    label: "Common Name"
+                },
+                {
+                    fieldName: "Botanical_Name",
+                    label: "Genus Species"
+                },
+                {
+                    fieldName: "Family",
+                    label: "Family Name",
+                    format: {
+                        places: 2
                     }
-                ]
-            }]
+                },
+                {
+                    fieldName: "DBH",
+                    label: "Diameter of Trunk in Centimeters",
+                    format: {
+                        places: 2
+                    }
+                },
+                {
+                    fieldName: "height",
+                    label: "Height in Meters",
+                    format: {
+                        places: 2
+                    }
+                },
+                {
+                    fieldName: "Canopy_NS",
+                    label: "Canopy Width in Meters, North-South",
+                    format: {
+                        places: 2
+                    }
+                },
+                {
+                    fieldName: "Canopy_EW",
+                    label: "Canopy Width in Meters, East-West",
+                    format: {
+                        places: 2
+                    }
+                }
+            ]
+        }]
+    }
+});
+
+let cn_select = document.getElementById("cn_select");
+let gs_select = document.getElementById("gs_select");
+let b_select = document.getElementById("b_select");
+
+let trees = [];
+let tree_pos = null;
+
+trees_layer.queryFeatures().then(results => {
+    trees = results.features;
+
+    let common_names = {};
+    let genus_species = {};
+    let buildings = {};
+
+    for (let tree of trees) {
+        let obj_id = tree.attributes["OBJECTID"];
+
+        let cn = tree.attributes["Common_Name"];
+        if (!common_names.hasOwnProperty(cn)) {
+            common_names[cn] = [];
         }
-    });
+        common_names[cn].push(obj_id);
 
-    function populateFilterSelect(id, field_name) {
-        trees_layer.queryFeatures({
-            where: `${field_name} IS NOT NULL`,
-            returnGeometry: false,
-            returnDistinctValues: true,
-            orderByFields: [field_name],
-            outFields: [field_name]
-        }).then(results => {
-            let select = document.getElementById(id);
+        let gs = tree.attributes["Botanical_Name"];
+        if (!genus_species.hasOwnProperty(gs)) {
+            genus_species[gs] = [];
+        }
+        genus_species[gs].push(obj_id);
 
-            for (let feature of results.features) {
-                let value = feature.attributes[field_name];
-
-                let option = document.createElement("option");
-                option.value = value;
-                option.innerText = value;
-
-                select.appendChild(option);
-            }
-        });
+        let b = tree.attributes["Building"];
+        if (!buildings.hasOwnProperty(b)) {
+            buildings[b] = [];
+        }
+        buildings[b].push(obj_id);
     }
 
-    populateFilterSelect("commonname_select", "Common_Name");
-    populateFilterSelect("genusspecies_select", "Botanical_Name");
-    populateFilterSelect("building_select", "Building");
+    for (let cn of Object.keys(common_names).sort()) {
+        let option = document.createElement("option");
+        option.value = common_names[cn].join(",");
+        option.innerText = cn;
 
-    let map = new Map({
-        basemap: "hybrid",
-        layers: [trees_layer]
-    });
-
-    let view = MapView({
-        map: map,
-        container: "map",
-        center: MAP_CENTER,
-        zoom: MAP_ZOOM
-    });
-
-    let home = new Home({
-        view: view
-    });
-
-    let compass = new Compass({
-        view: view
-    });
-
-    let basemap_gallery = new BasemapGallery({
-        view: view
-    });
-
-    let bg_expand = new Expand({
-        view: view,
-        content: basemap_gallery
-    });
-    basemap_gallery.watch("activeBasemap", event => {
-        bg_expand.collapse();
-    });
-
-    view.ui.move("zoom", "top-right");
-    view.ui.add(home, "top-right");
-    view.ui.add(compass, "top-right");
-    view.ui.add(bg_expand, "bottom-right");
-
-    document.querySelector("div[role='application']").setAttribute("aria-label", "Accessible Map Viewer");
-
-    let trees;
-    let tree_pos;
-    trees_layer.queryFeatures().then(results => {
-        trees = results.features;
-        tree_pos = null;
-    });
-
-    function filterTrees() {
-        view.popup.close();
-
-        let filtered_ids = [];
-
-        let common_name = document.getElementById("commonname_select").value;
-        let genus_species = document.getElementById("genusspecies_select").value;
-        let building = document.getElementById("building_select").value;
-
-        for (let tree of trees) {
-            if ((common_name === "Any Value" || common_name === tree.attributes["Common_Name"])
-                && (genus_species === "Any Value" || genus_species === tree.attributes["Botanical_Name"])
-                && (building === "Any Value" || building === tree.attributes["Building"])) {
-                filtered_ids.push(tree.attributes["OBJECTID"]);
-            }
-        }
-
-        if (filtered_ids.length > 0) {
-            trees_layer.definitionExpression = `OBJECTID IN (${filtered_ids.join(",")})`;
-        }
-        else {
-            trees_layer.definitionExpression = null;
-        }
+        cn_select.appendChild(option);
     }
 
-    document.getElementById("commonname_select").addEventListener("change", filterTrees);
-    document.getElementById("genusspecies_select").addEventListener("change", filterTrees);
-    document.getElementById("building_select").addEventListener("change", filterTrees);
+    for (let gs of Object.keys(genus_species).sort()) {
+        let option = document.createElement("option");
+        option.value = genus_species[gs].join(",");
+        option.innerText = gs;
 
-    view.on("key-up", event => {
-        if (event.key !== "Enter") {
-            return;
-        }
+        gs_select.appendChild(option);
+    }
 
-        let go_back = event.native.shiftKey;
+    for (let b of Object.keys(buildings).sort()) {
+        let option = document.createElement("option");
+        option.value = buildings[b].join(",");
+        option.innerText = b;
 
-        if (tree_pos === null) {
-            tree_pos = 0
-        }
-        else if ((go_back && tree_pos === 0) || (!go_back && tree_pos === trees.length-1)) {
-            return;
-        }
-        else if (go_back) {
-            --tree_pos;
-        }
-        else {
-            ++tree_pos;
-        }
+        b_select.appendChild(option);
+    }
+});
 
-        let tree = trees[tree_pos];
+function filterTrees() {
+    view.popup.close();
 
-        view.popup.open({
-            features: [tree],
-            updateLocationEnabled: true
-        });
+    let filters = [];
+
+    let cn = cn_select.value;
+    if (cn !== "Any Value") {
+        filters.push(`OBJECTID IN (${cn})`);
+    }
+
+    let gs = gs_select.value;
+    if (gs !== "Any Value") {
+        filters.push(`OBJECTID IN (${gs})`);
+    }
+
+    let b = b_select.value;
+    if (b !== "Any Value") {
+        filters.push(`OBJECTID IN (${b})`);
+    }
+
+    trees_layer.definitionExpression = filters.join(" AND ");
+}
+cn_select.addEventListener("change", filterTrees);
+gs_select.addEventListener("change", filterTrees);
+b_select.addEventListener("change", filterTrees);
+
+let map = new Map({
+    basemap: "hybrid",
+    layers: [trees_layer]
+});
+
+let view = MapView({
+    map: map,
+    container: "map",
+    center: MAP_CENTER,
+    zoom: MAP_ZOOM
+});
+
+let home = new Home({
+    view: view
+});
+
+let compass = new Compass({
+    view: view
+});
+
+let basemap_gallery = new BasemapGallery({
+    view: view
+});
+
+let bg_expand = new Expand({
+    view: view,
+    content: basemap_gallery
+});
+basemap_gallery.watch("activeBasemap", event => {
+    bg_expand.collapse();
+});
+
+view.ui.move("zoom", "top-right");
+view.ui.add([home, compass], "top-right");
+view.ui.add(bg_expand, "bottom-right");
+
+document.querySelector("div[role='application']")["aria-label"] = "Accessible Map Viewer";
+
+view.on("key-up", event => {
+    if (event.key !== "Enter") {
+        return;
+    }
+
+    let go_back = event.native.shiftKey;
+
+    if (tree_pos === null) {
+        tree_pos = 0
+    }
+    else if ((go_back && tree_pos === 0) || (!go_back && tree_pos === trees.length-1)) {
+        return;
+    }
+    else if (go_back) {
+        --tree_pos;
+    }
+    else {
+        ++tree_pos;
+    }
+
+    let tree = trees[tree_pos];
+
+    view.popup.open({
+        features: [tree],
+        updateLocationEnabled: true
     });
+});
 
-    view.surface.addEventListener("wheel", event => {
-        event.stopImmediatePropagation();
-    }, true);
+view.surface.addEventListener("wheel", event => {
+    event.stopImmediatePropagation();
+}, true);
+
 });
