@@ -7,7 +7,10 @@
  * Spring 2019
  **************************************************************************************************/
 
-html {
+html,
+body,
+main,
+#map {
     height: 100%;
     width: 100%;
 }
@@ -16,15 +19,8 @@ body {
     background-color: navy;
     color: navy;
     font-family: Helvetica, sans-serif;
-    height: 100%;
     margin: 0;
     overflow: hidden;
-    width: 100%;
-}
-
-main {
-    height: 100%;
-    width: 100%;
 }
 
 main:focus-within {
@@ -36,16 +32,14 @@ main:focus-within {
 nav {
     background-color: lightgray;
     border-bottom-right-radius: 5px;
-    margin-right: 200px;
+    margin-right: 250px;
     opacity: 0.95;
     position: absolute;
     z-index: 1;
 }
 
 nav div {
-    background-color: lightgray;
-    border-radius: 2px;
-    float: left;
+    display: inline-block;
     padding: 10px;
 }
 
@@ -68,8 +62,8 @@ nav fieldset legend {
 }
 
 nav fieldset label {
-    float: left;
-    margin: 5px 10px;
+    display: inline-block;
+    margin: 5px;
 }
 
 nav fieldset select {
@@ -78,11 +72,6 @@ nav fieldset select {
     border-radius: 2px;
     color: navy;
     width: 150px
-}
-
-#map {
-    height: 100%;
-    width: 100%;
 }
 
 #warning {
