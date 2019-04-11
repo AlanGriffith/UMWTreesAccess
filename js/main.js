@@ -23,10 +23,20 @@ require([
     "esri/widgets/BasemapGallery"
 ], (Map, MapView, FeatureLayer, Home, Compass, Expand, BasemapGallery) => {
 
+function createPopupTitle() {
+    let obj_id = view.popup.viewModel.selectedFeature.attributes["OBJECTID"];
+
+    if (tree_pos === -1 || trees[tree_pos].attributes["OBJECTID"] !== obj_id) {
+        tree_pos = trees.map(t => t.attributes["OBJECTID"]).indexOf(obj_id);
+    }
+
+    return `<h1>Tree #${tree_pos + 1}</h1>`;
+}
+
 let trees_layer = new FeatureLayer({
     url: FEATURE_LAYER,
     popupTemplate: {
-        title: "<h1 aria-label='Tree Number {OBJECTID}' aria-live='assertive'>Tree #{OBJECTID}</h1>",
+        title: createPopupTitle,
         content: [{
             type: "fields",
             fieldInfos: [
@@ -152,6 +162,7 @@ trees_layer.queryFeatures().then(results => {
 
 function filterTrees() {
     view.popup.close();
+    tree_counter.innerText = "...";
 
     let filters = [];
 
@@ -247,6 +258,12 @@ view.on("key-up", event => {
         features: [tree],
         updateLocationEnabled: true
     });
+});
+
+view.popup.watch("selectedFeature", graphic => {
+    if (graphic) {
+        view.popup.title = createPopupTitle();
+    }
 });
 
 view.surface.addEventListener("wheel", event => {
