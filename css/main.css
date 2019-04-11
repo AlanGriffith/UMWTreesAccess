@@ -74,6 +74,14 @@ nav fieldset select {
     width: 150px
 }
 
+nav fieldset select[disabled] {
+    background-color: gray;
+}
+
+#tree_counter {
+    font-weight: bold;
+}
+
 #warning {
     background-color: crimson;
     color: white;

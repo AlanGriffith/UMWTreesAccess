@@ -85,9 +85,10 @@ let trees_layer = new FeatureLayer({
 let cn_select = document.getElementById("cn_select");
 let gs_select = document.getElementById("gs_select");
 let b_select = document.getElementById("b_select");
+let tree_counter = document.getElementById("tree_counter");
 
 let trees = [];
-let tree_pos = null;
+let tree_pos = -1;
 
 trees_layer.queryFeatures().then(results => {
     trees = results.features;
@@ -141,6 +142,12 @@ trees_layer.queryFeatures().then(results => {
 
         b_select.appendChild(option);
     }
+
+    cn_select.disabled = false;
+    gs_select.disabled = false;
+    b_select.disabled = false;
+
+    tree_counter.innerText = `${trees.length}`;
 });
 
 function filterTrees() {
@@ -164,6 +171,13 @@ function filterTrees() {
     }
 
     trees_layer.definitionExpression = filters.join(" AND ");
+
+    trees_layer.queryFeatures().then(results => {
+        trees = results.features;
+        tree_pos = -1;
+
+        tree_counter.innerText = `${trees.length}`;
+    });
 }
 cn_select.addEventListener("change", filterTrees);
 gs_select.addEventListener("change", filterTrees);
@@ -214,7 +228,7 @@ view.on("key-up", event => {
 
     let go_back = event.native.shiftKey;
 
-    if (tree_pos === null) {
+    if (tree_pos === -1) {
         tree_pos = 0
     }
     else if ((go_back && tree_pos === 0) || (!go_back && tree_pos === trees.length-1)) {
