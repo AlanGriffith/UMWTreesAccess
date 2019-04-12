@@ -30,16 +30,17 @@ main:focus-within {
 }
 
 nav {
-    background-color: lightgray;
-    border-bottom-right-radius: 5px;
-    margin-right: 250px;
-    opacity: 0.95;
+    margin-right: calc(825px - 50%);
     position: absolute;
     z-index: 1;
 }
 
 nav div {
-    display: inline-block;
+    background-color: lightgray;
+    float: left;
+    min-height: 65px;
+    min-width: 355px;
+    opacity: 0.95;
     padding: 10px;
 }
 
