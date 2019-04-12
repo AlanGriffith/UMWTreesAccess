@@ -22,252 +22,257 @@ require([
     "esri/widgets/Expand",
     "esri/widgets/BasemapGallery"
 ], (Map, MapView, FeatureLayer, Home, Compass, Expand, BasemapGallery) => {
-
-function createPopupTitle() {
-    let obj_id = view.popup.viewModel.selectedFeature.attributes["OBJECTID"];
-
-    if (tree_pos === -1 || trees[tree_pos].attributes["OBJECTID"] !== obj_id) {
-        tree_pos = trees.map(t => t.attributes["OBJECTID"]).indexOf(obj_id);
-    }
-
-    return `<h1>Tree #${tree_pos + 1}</h1>`;
-}
-
-let trees_layer = new FeatureLayer({
-    url: FEATURE_LAYER,
-    popupTemplate: {
-        title: createPopupTitle,
-        content: [{
-            type: "fields",
-            fieldInfos: [
-                {
-                    fieldName: "Building",
-                    label: "Location"
+    new Vue({
+        el: "main",
+        data: {
+            layer: null,
+            trees: [],
+            tree_idx: -1,
+            view: null,
+        },
+        computed: {
+            counter: {
+                get() {
+                    return this.$refs.tree_counter.innerText;
                 },
-                {
-                    fieldName: "Common_Name",
-                    label: "Common Name"
-                },
-                {
-                    fieldName: "Botanical_Name",
-                    label: "Genus Species"
-                },
-                {
-                    fieldName: "Family",
-                    label: "Family Name",
-                    format: {
-                        places: 2
-                    }
-                },
-                {
-                    fieldName: "DBH",
-                    label: "Diameter of Trunk in Centimeters",
-                    format: {
-                        places: 2
-                    }
-                },
-                {
-                    fieldName: "height",
-                    label: "Height in Meters",
-                    format: {
-                        places: 2
-                    }
-                },
-                {
-                    fieldName: "Canopy_NS",
-                    label: "Canopy Width in Meters, North-South",
-                    format: {
-                        places: 2
-                    }
-                },
-                {
-                    fieldName: "Canopy_EW",
-                    label: "Canopy Width in Meters, East-West",
-                    format: {
-                        places: 2
-                    }
+                set(value) {
+                    this.$refs.tree_counter.innerText = value;
                 }
-            ]
-        }]
-    }
-});
+            },
+            popup() {
+                return this.view.popup;
+            }
+        },
+        methods: {
+            createESRIComponents() {
+                this.layer = new FeatureLayer({
+                    url: FEATURE_LAYER,
+                    popupTemplate: {
+                        title: this.createPopupTitle,
+                        content: [{
+                            type: "fields",
+                            fieldInfos: [
+                                {
+                                    fieldName: "Building",
+                                    label: "Location"
+                                },
+                                {
+                                    fieldName: "Common_Name",
+                                    label: "Common Name"
+                                },
+                                {
+                                    fieldName: "Botanical_Name",
+                                    label: "Genus Species"
+                                },
+                                {
+                                    fieldName: "Family",
+                                    label: "Family Name"
+                                },
+                                {
+                                    fieldName: "DBH",
+                                    label: "Diameter of Trunk in Centimeters",
+                                    format: {
+                                        places: 2
+                                    }
+                                },
+                                {
+                                    fieldName: "height",
+                                    label: "Height in Meters",
+                                    format: {
+                                        places: 2
+                                    }
+                                },
+                                {
+                                    fieldName: "Canopy_NS",
+                                    label: "Canopy Width in Meters, North-South",
+                                    format: {
+                                        places: 2
+                                    }
+                                },
+                                {
+                                    fieldName: "Canopy_EW",
+                                    label: "Canopy Width in Meters, East-West",
+                                    format: {
+                                        places: 2
+                                    }
+                                }
+                            ]
+                        }]
+                    }
+                });
 
-let cn_select = document.getElementById("cn_select");
-let gs_select = document.getElementById("gs_select");
-let b_select = document.getElementById("b_select");
-let tree_counter = document.getElementById("tree_counter");
+                this.view = MapView({
+                    map: new Map({
+                        basemap: "hybrid",
+                        layers: [this.layer]
+                    }),
+                    container: "map",
+                    center: MAP_CENTER,
+                    zoom: MAP_ZOOM
+                });
 
-let trees = [];
-let tree_pos = -1;
+                let home = new Home({
+                    view: this.view
+                });
 
-trees_layer.queryFeatures().then(results => {
-    trees = results.features;
+                let compass = new Compass({
+                    view: this.view
+                });
 
-    let common_names = {};
-    let genus_species = {};
-    let buildings = {};
+                let bg_expand = new Expand({
+                    view: this.view,
+                    content: new BasemapGallery({
+                        view: this.view
+                    }),
+                    autoCollapse: true
+                });
 
-    for (let tree of trees) {
-        let obj_id = tree.attributes["OBJECTID"];
+                this.view.ui.move("zoom", "top-right");
+                this.view.ui.add([home, compass], "top-right");
+                this.view.ui.add(bg_expand, "bottom-right");
+            },
+            createFilterOptions() {
+                let common_names = {};
+                let genus_species = {};
+                let buildings = {};
 
-        let cn = tree.attributes["Common_Name"];
-        if (!common_names.hasOwnProperty(cn)) {
-            common_names[cn] = [];
+                for (let tree of this.trees) {
+                    let obj_id = tree.attributes["OBJECTID"];
+
+                    let cn = tree.attributes["Common_Name"];
+                    if (!common_names.hasOwnProperty(cn)) {
+                        common_names[cn] = [];
+                    }
+                    common_names[cn].push(obj_id);
+
+                    let gs = tree.attributes["Botanical_Name"];
+                    if (!genus_species.hasOwnProperty(gs)) {
+                        genus_species[gs] = [];
+                    }
+                    genus_species[gs].push(obj_id);
+
+                    let b = tree.attributes["Building"];
+                    if (!buildings.hasOwnProperty(b)) {
+                        buildings[b] = [];
+                    }
+                    buildings[b].push(obj_id);
+                }
+
+                for (let cn of Object.keys(common_names).sort()) {
+                    let option = document.createElement("option");
+                    option.innerText = cn;
+                    option.value = common_names[cn].join(",");
+
+                    this.$refs.cn_select.appendChild(option);
+                }
+
+                for (let gs of Object.keys(genus_species).sort()) {
+                    let option = document.createElement("option");
+                    option.innerText = gs;
+                    option.value = genus_species[gs].join(",");
+
+                    this.$refs.gs_select.appendChild(option);
+                }
+
+                for (let b of Object.keys(buildings).sort()) {
+                    let option = document.createElement("option");
+                    option.innerText = b;
+                    option.value = buildings[b].join(",");
+
+                    this.$refs.b_select.appendChild(option);
+                }
+
+                this.$refs.cn_select.disabled = false;
+                this.$refs.gs_select.disabled = false;
+                this.$refs.b_select.disabled = false;
+            },
+            createPopupTitle() {
+                let obj_id = this.popup.viewModel.selectedFeature.attributes["OBJECTID"];
+
+                if (this.tree_idx === -1 || this.trees[this.tree_idx].attributes["OBJECTID"] !== obj_id) {
+                    this.tree_idx = this.trees.findIndex(t => t.attributes["OBJECTID"] === obj_id);
+                }
+
+                return `<h1>Tree #${this.tree_idx + 1}</h1>`;
+            },
+            filterTrees() {
+                this.popup.close();
+                this.counter = "...";
+
+                let filters = [];
+
+                let cn = this.$refs.cn_select.value;
+                if (cn !== "Any Value") {
+                    filters.push(`OBJECTID IN (${cn})`);
+                }
+
+                let gs = this.$refs.gs_select.value;
+                if (gs !== "Any Value") {
+                    filters.push(`OBJECTID IN (${gs})`);
+                }
+
+                let b = this.$refs.b_select.value;
+                if (b !== "Any Value") {
+                    filters.push(`OBJECTID IN (${b})`);
+                }
+
+                this.layer.definitionExpression = filters.join(" AND ");
+
+                this.layer.queryFeatures().then(results => {
+                    this.trees = results.features;
+                    this.tree_idx = -1;
+                    this.counter = `${this.trees.length}`;
+                });
+            },
+            nextTree(go_back) {
+                if ((go_back && this.tree_idx === 0) || (!go_back && this.tree_idx === this.trees.length-1)) {
+                    return;
+                }
+
+                if (this.tree_idx === -1) {
+                    this.tree_idx = 0
+                }
+                else if (go_back) {
+                    --this.tree_idx;
+                }
+                else {
+                    ++this.tree_idx;
+                }
+
+                let tree = this.trees[this.tree_idx];
+
+                this.popup.open({
+                    features: [tree],
+                    updateLocationEnabled: true
+                });
+            }
+        },
+        mounted() {
+            this.createESRIComponents();
+
+            this.layer.queryFeatures().then(results => {
+                this.trees = results.features;
+                this.counter = `${this.trees.length}`;
+
+                this.createFilterOptions();
+            });
+
+            this.view.on("key-up", event => {
+                if (event.key === "Enter") {
+                    let go_back = event.native.shiftKey;
+                    this.nextTree(go_back);
+                }
+            });
+
+            this.popup.watch("selectedFeature", graphic => {
+                if (graphic) {
+                    this.popup.title = this.createPopupTitle();
+                }
+            });
+
+            this.view.surface.addEventListener("wheel", event => {
+                event.stopImmediatePropagation();
+            }, true);
         }
-        common_names[cn].push(obj_id);
-
-        let gs = tree.attributes["Botanical_Name"];
-        if (!genus_species.hasOwnProperty(gs)) {
-            genus_species[gs] = [];
-        }
-        genus_species[gs].push(obj_id);
-
-        let b = tree.attributes["Building"];
-        if (!buildings.hasOwnProperty(b)) {
-            buildings[b] = [];
-        }
-        buildings[b].push(obj_id);
-    }
-
-    for (let cn of Object.keys(common_names).sort()) {
-        let option = document.createElement("option");
-        option.value = common_names[cn].join(",");
-        option.innerText = cn;
-
-        cn_select.appendChild(option);
-    }
-
-    for (let gs of Object.keys(genus_species).sort()) {
-        let option = document.createElement("option");
-        option.value = genus_species[gs].join(",");
-        option.innerText = gs;
-
-        gs_select.appendChild(option);
-    }
-
-    for (let b of Object.keys(buildings).sort()) {
-        let option = document.createElement("option");
-        option.value = buildings[b].join(",");
-        option.innerText = b;
-
-        b_select.appendChild(option);
-    }
-
-    cn_select.disabled = false;
-    gs_select.disabled = false;
-    b_select.disabled = false;
-
-    tree_counter.innerText = `${trees.length}`;
-});
-
-function filterTrees() {
-    view.popup.close();
-    tree_counter.innerText = "...";
-
-    let filters = [];
-
-    let cn = cn_select.value;
-    if (cn !== "Any Value") {
-        filters.push(`OBJECTID IN (${cn})`);
-    }
-
-    let gs = gs_select.value;
-    if (gs !== "Any Value") {
-        filters.push(`OBJECTID IN (${gs})`);
-    }
-
-    let b = b_select.value;
-    if (b !== "Any Value") {
-        filters.push(`OBJECTID IN (${b})`);
-    }
-
-    trees_layer.definitionExpression = filters.join(" AND ");
-
-    trees_layer.queryFeatures().then(results => {
-        trees = results.features;
-        tree_pos = -1;
-
-        tree_counter.innerText = `${trees.length}`;
     });
-}
-cn_select.addEventListener("change", filterTrees);
-gs_select.addEventListener("change", filterTrees);
-b_select.addEventListener("change", filterTrees);
-
-let map = new Map({
-    basemap: "hybrid",
-    layers: [trees_layer]
-});
-
-let view = MapView({
-    map: map,
-    container: "map",
-    center: MAP_CENTER,
-    zoom: MAP_ZOOM
-});
-
-let home = new Home({
-    view: view
-});
-
-let compass = new Compass({
-    view: view
-});
-
-let basemap_gallery = new BasemapGallery({
-    view: view
-});
-
-let bg_expand = new Expand({
-    view: view,
-    content: basemap_gallery
-});
-basemap_gallery.watch("activeBasemap", event => {
-    bg_expand.collapse();
-});
-
-view.ui.move("zoom", "top-right");
-view.ui.add([home, compass], "top-right");
-view.ui.add(bg_expand, "bottom-right");
-
-document.querySelector("div[role='application']")["aria-label"] = "Accessible Map Viewer";
-
-view.on("key-up", event => {
-    if (event.key !== "Enter") {
-        return;
-    }
-
-    let go_back = event.native.shiftKey;
-
-    if (tree_pos === -1) {
-        tree_pos = 0
-    }
-    else if ((go_back && tree_pos === 0) || (!go_back && tree_pos === trees.length-1)) {
-        return;
-    }
-    else if (go_back) {
-        --tree_pos;
-    }
-    else {
-        ++tree_pos;
-    }
-
-    let tree = trees[tree_pos];
-
-    view.popup.open({
-        features: [tree],
-        updateLocationEnabled: true
-    });
-});
-
-view.popup.watch("selectedFeature", graphic => {
-    if (graphic) {
-        view.popup.title = createPopupTitle();
-    }
-});
-
-view.surface.addEventListener("wheel", event => {
-    event.stopImmediatePropagation();
-}, true);
-
 });

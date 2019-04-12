@@ -15,6 +15,7 @@
     <link href="img/umw_logo.png" type="image/png" rel="icon">
     <link href="https://js.arcgis.com/4.11/esri/themes/light/main.css" type="text/css" rel="stylesheet">
     <link href="css/main.css" type="text/css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://js.arcgis.com/4.11/"></script>
     <script src="js/main.js"></script>
 </head>
@@ -30,22 +31,22 @@
             </div>
             <div>
                 <fieldset>
-                    <legend>Filter Trees: <span id="tree_counter">...</span></legend>
+                    <legend>Filter Trees: <span ref="tree_counter">...</span></legend>
                     <label>
                         Common Name:
-                        <select disabled id="cn_select">
+                        <select @change="filterTrees" ref="cn_select" disabled>
                             <option>Any Value</option>
                         </select>
                     </label>
                     <label>
                         Genus Species:
-                        <select disabled id="gs_select">
+                        <select @change="filterTrees" ref="gs_select" disabled>
                             <option>Any Value</option>
                         </select>
                     </label>
                     <label>
                         Building:
-                        <select disabled id="b_select">
+                        <select @change="filterTrees" ref="b_select" disabled>
                             <option>Any Value</option>
                         </select>
                     </label>

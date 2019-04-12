@@ -61,6 +61,10 @@ nav fieldset legend {
     padding: 0 5px;
 }
 
+nav fieldset legend span {
+    font-weight: bold;
+}
+
 nav fieldset label {
     display: inline-block;
     margin: 5px;
@@ -76,10 +80,6 @@ nav fieldset select {
 
 nav fieldset select[disabled] {
     background-color: gray;
-}
-
-#tree_counter {
-    font-weight: bold;
 }
 
 #warning {
