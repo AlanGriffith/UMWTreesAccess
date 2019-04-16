@@ -10,8 +10,6 @@
 "use strict";
 
 const FEATURE_LAYER = "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Heritage_Online_Manage_noedit_WFL1/FeatureServer/0";
-const MAP_CENTER = [-77.4770, 38.3055];
-const MAP_ZOOM = 18;
 
 require([
     "esri/Map",
@@ -108,12 +106,13 @@ require([
                         layers: [this.layer]
                     }),
                     container: "map",
-                    center: MAP_CENTER,
-                    zoom: MAP_ZOOM
+                    center: [-77.4770, 38.3055],
+                    zoom: 18
                 });
 
                 let home = new Home({
-                    view: this.view
+                    view: this.view,
+                    goToOverride: this.updateExtent
                 });
 
                 let compass = new Compass({
@@ -223,6 +222,8 @@ require([
                     this.trees = results.features;
                     this.tree_idx = -1;
                     this.counter = `${this.trees.length}`;
+
+                    this.updateExtent();
                 });
             },
             nextTree(go_back) {
@@ -246,6 +247,9 @@ require([
                     features: [tree],
                     updateLocationEnabled: true
                 });
+            },
+            updateExtent() {
+                this.view.goTo(this.trees);
             }
         },
         mounted() {
@@ -255,6 +259,7 @@ require([
                 this.trees = results.features;
                 this.counter = `${this.trees.length}`;
 
+                this.updateExtent();
                 this.createFilterOptions();
             });
 
