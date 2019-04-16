@@ -47,6 +47,7 @@ require([
             createESRIComponents() {
                 this.layer = new FeatureLayer({
                     url: FEATURE_LAYER,
+                    definitionExpression: "UPPER(Comment_) <> 'REMOVED'",
                     popupTemplate: {
                         title: this.createPopupTitle,
                         content: [{
@@ -199,7 +200,7 @@ require([
                 this.popup.close();
                 this.counter = "...";
 
-                let filters = [];
+                let filters = ["UPPER(Comment_) <> 'REMOVED'"];
 
                 let cn = this.$refs.cn_select.value;
                 if (cn !== "Any Value") {
