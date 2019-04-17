@@ -10,6 +10,8 @@
 "use strict";
 
 const FEATURE_LAYER = "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Heritage_Online_Manage_noedit_WFL1/FeatureServer/0";
+const MAP_CENTER = [-77.47432149070814, 38.30174598000295];
+const MAP_ZOOM = 16;
 
 require([
     "esri/Map",
@@ -45,7 +47,7 @@ require([
             createESRIComponents() {
                 this.layer = new FeatureLayer({
                     url: FEATURE_LAYER,
-                    definitionExpression: "UPPER(Comment_) <> 'REMOVED'",
+                    definitionExpression: "LOWER(Comment_) <> 'removed'",
                     popupTemplate: {
                         title: this.createPopupTitle,
                         content: [{
@@ -106,8 +108,8 @@ require([
                         layers: [this.layer]
                     }),
                     container: "map",
-                    center: [-77.4770, 38.3055],
-                    zoom: 18
+                    center: MAP_CENTER,
+                    zoom: MAP_ZOOM
                 });
 
                 let home = new Home({
@@ -199,7 +201,7 @@ require([
                 this.popup.close();
                 this.counter = "...";
 
-                let filters = ["UPPER(Comment_) <> 'REMOVED'"];
+                let filters = ["LOWER(Comment_) <> 'removed'"];
 
                 let cn = this.$refs.cn_select.value;
                 if (cn !== "Any Value") {
@@ -249,7 +251,7 @@ require([
                 });
             },
             updateExtent() {
-                this.view.goTo(this.trees);
+                return this.view.goTo(this.trees);
             }
         },
         mounted() {
