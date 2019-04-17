@@ -135,7 +135,7 @@ require([
 
                 this.$nextTick(() => {
                     document.querySelectorAll(".esri-attribution__sources, .esri-attribution__link").forEach(el => {
-                        el.setAttribute("tabindex", "-1");
+                        el.tabIndex = -1;
                     });
                 });
             },
