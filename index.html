@@ -24,36 +24,36 @@
         <h1 id="warning"><strong>This map requires JavaScript to work!</strong></h1>
     </noscript>
     <main>
-        <nav tabindex="1">
+        <nav tabindex="0" aria-label="University of Mary Washington Map Data Accessibility Project">
             <div>
                 <h1>University of Mary Washington</h1>
                 <h2>Map Data Accessibility Project</h2>
             </div>
             <div>
                 <fieldset>
-                    <legend>Filter Trees: <span ref="tree_counter">...</span></legend>
+                    <legend tabindex="0">Total Trees: <span ref="tree_counter">...</span></legend>
                     <label>
                         Common Name:
-                        <select @change="filterTrees" ref="cn_select" disabled>
+                        <select @change="filterTrees" ref="cn_select" tabindex="0" aria-label="Filter by Common Name" disabled>
                             <option>Any Value</option>
                         </select>
                     </label>
                     <label>
                         Genus Species:
-                        <select @change="filterTrees" ref="gs_select" disabled>
+                        <select @change="filterTrees" ref="gs_select" tabindex="0" aria-label="Filter by Genus Species" disabled>
                             <option>Any Value</option>
                         </select>
                     </label>
                     <label>
                         Building:
-                        <select @change="filterTrees" ref="b_select" disabled>
+                        <select @change="filterTrees" ref="b_select" tabindex="0" aria-label="Filter by Building" disabled>
                             <option>Any Value</option>
                         </select>
                     </label>
                 </fieldset>
             </div>
         </nav>
-        <section id="map" tabindex="1" aria-label="Map"></section>
+        <section id="map" tabindex="-1" aria-label="Map"></section>
     </main>
 </body>
 </html>

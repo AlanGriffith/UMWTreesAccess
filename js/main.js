@@ -132,6 +132,12 @@ require([
                 this.view.ui.move("zoom", "top-right");
                 this.view.ui.add([home, compass], "top-right");
                 this.view.ui.add(bg_expand, "bottom-right");
+
+                this.$nextTick(() => {
+                    document.querySelectorAll(".esri-attribution__sources, .esri-attribution__link").forEach(el => {
+                        el.setAttribute("tabindex", "-1");
+                    });
+                });
             },
             createFilterOptions() {
                 let common_names = {};
@@ -195,7 +201,7 @@ require([
                     this.tree_idx = this.trees.findIndex(t => t.attributes["OBJECTID"] === obj_id);
                 }
 
-                return `<h1>Tree #${this.tree_idx + 1}</h1>`;
+                return `<h1 tabindex="1" aria-live="assertive">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
             },
             filterTrees() {
                 this.popup.close();
@@ -266,9 +272,11 @@ require([
             });
 
             this.view.on("key-up", event => {
-                if (event.key === "Enter") {
-                    let go_back = event.native.shiftKey;
-                    this.nextTree(go_back);
+                if (event.key.toLowerCase() === "n") {
+                    this.nextTree(false);
+                }
+                else if (event.key.toLowerCase() === "b") {
+                    this.nextTree(true);
                 }
             });
 
