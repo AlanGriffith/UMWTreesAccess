@@ -114,7 +114,7 @@ nav fieldset select[disabled] {
 }
 
 .esri-popup__content {
-    margin: 10px 0;
+    margin: 0 0 10px;
 }
 
 .esri-feature__fields {

@@ -50,55 +50,11 @@ require([
                     definitionExpression: "LOWER(Comment_) <> 'removed'",
                     popupTemplate: {
                         title: this.createPopupTitle,
-                        content: [{
-                            type: "fields",
-                            fieldInfos: [
-                                {
-                                    fieldName: "Building",
-                                    label: "Location"
-                                },
-                                {
-                                    fieldName: "Common_Name",
-                                    label: "Common Name"
-                                },
-                                {
-                                    fieldName: "Botanical_Name",
-                                    label: "Genus Species"
-                                },
-                                {
-                                    fieldName: "Family",
-                                    label: "Family Name"
-                                },
-                                {
-                                    fieldName: "DBH",
-                                    label: "Diameter of Trunk in Centimeters",
-                                    format: {
-                                        places: 2
-                                    }
-                                },
-                                {
-                                    fieldName: "height",
-                                    label: "Height in Meters",
-                                    format: {
-                                        places: 2
-                                    }
-                                },
-                                {
-                                    fieldName: "Canopy_NS",
-                                    label: "Canopy Width in Meters, North-South",
-                                    format: {
-                                        places: 2
-                                    }
-                                },
-                                {
-                                    fieldName: "Canopy_EW",
-                                    label: "Canopy Width in Meters, East-West",
-                                    format: {
-                                        places: 2
-                                    }
-                                }
-                            ]
-                        }]
+                        content: this.createPopupContent,
+                        outFields: ["Building", "Common_Name", "Botanical_Name", "Family",  "DBH",
+                                    "height", "Canopy_NS", "Canopy_EW"],
+                        actions: [],
+                        overwriteActions: true
                     }
                 });
 
@@ -194,6 +150,53 @@ require([
                 this.$refs.gs_select.disabled = false;
                 this.$refs.b_select.disabled = false;
             },
+            createPopupContent() {
+                let geometry = this.popup.viewModel.selectedFeature.geometry;
+                let lat = geometry.latitude.toFixed(5);
+                let lon = geometry.longitude.toFixed(5);
+
+                return `\
+<table class="esri-widget__table">
+    <tbody>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Location</th>
+            <td class="esri-feature__field-data">{Building}</td>
+        </tr>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Common Name</th>
+            <td class="esri-feature__field-data">{Common_Name}</td>
+        </tr>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Genus Species</th>
+            <td class="esri-feature__field-data">{Botanical_Name}</td>
+        </tr>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Family Name</th>
+            <td class="esri-feature__field-data">{Family}</td>
+        </tr>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Diameter of Trunk in Centimeters</th>
+            <td class="esri-feature__field-data">{DBH}</td>
+        </tr>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Height in Meters</th>
+            <td class="esri-feature__field-data">{height}</td>
+        </tr>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Canopy Width in Meters, North-South</th>
+            <td class="esri-feature__field-data">{Canopy_NS}</td>
+        </tr>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Canopy Width in Meters, East-West</th>
+            <td class="esri-feature__field-data">{Canopy_EW}</td>
+        </tr>
+        <tr tabindex="0">
+            <th class="esri-feature__field-header">Coordinates</th>
+            <td class="esri-feature__field-data">${lat}° N ${lon}° W</td>
+        </tr>
+    </tbody>
+</table>`;
+            },
             createPopupTitle() {
                 let obj_id = this.popup.viewModel.selectedFeature.attributes["OBJECTID"];
 
@@ -201,7 +204,7 @@ require([
                     this.tree_idx = this.trees.findIndex(t => t.attributes["OBJECTID"] === obj_id);
                 }
 
-                return `<h1 tabindex="1" aria-live="assertive">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
+                return `<h1 tabindex="-1" aria-live="assertive">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
             },
             filterTrees() {
                 this.popup.close();
@@ -240,7 +243,7 @@ require([
                 }
 
                 if (this.tree_idx === -1) {
-                    this.tree_idx = 0
+                    this.tree_idx = 0;
                 }
                 else if (go_back) {
                     --this.tree_idx;
