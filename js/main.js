@@ -258,6 +258,7 @@ require([
                     features: [tree],
                     updateLocationEnabled: true
                 });
+                this.popup.focus();
             },
             updateExtent() {
                 return this.view.goTo(this.trees);
@@ -274,7 +275,7 @@ require([
                 this.createFilterOptions();
             });
 
-            this.view.on("key-up", event => {
+            document.getElementById("map").addEventListener("keyup", event => {
                 if (event.key.toLowerCase() === "n") {
                     this.nextTree(false);
                 }
@@ -283,15 +284,16 @@ require([
                 }
             });
 
-            this.popup.watch("selectedFeature", graphic => {
-                if (graphic) {
-                    this.popup.title = this.createPopupTitle();
-                }
-            });
-
             this.view.surface.addEventListener("wheel", event => {
                 event.stopImmediatePropagation();
             }, true);
+
+            this.popup.watch("selectedFeature", graphic => {
+                if (graphic) {
+                    this.popup.title = this.createPopupTitle();
+                    this.popup.focus();
+                }
+            });
         }
     });
 });
