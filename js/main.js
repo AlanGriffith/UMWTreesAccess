@@ -86,6 +86,8 @@ require([
                 this.view.ui.move("zoom", "top-right");
                 this.view.ui.add([home, compass], "top-right");
                 this.view.ui.add(bg_expand, "bottom-right");
+
+                this.popup.collapseEnabled = false;
             },
             createFilterOptions() {
                 let common_names = {};
@@ -196,7 +198,7 @@ require([
                     this.tree_idx = this.trees.findIndex(t => t.attributes["OBJECTID"] === obj_id);
                 }
 
-                return `<h1 tabindex="-1" aria-live="assertive">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
+                return `<h1 tabindex="-1">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
             },
             filterTrees() {
                 this.popup.close();
