@@ -52,9 +52,7 @@ require([
                         title: this.createPopupTitle,
                         content: this.createPopupContent,
                         outFields: ["Building", "Common_Name", "Botanical_Name", "Family",  "DBH",
-                                    "height", "Canopy_NS", "Canopy_EW"],
-                        actions: [],
-                        overwriteActions: true
+                                    "height", "Canopy_NS", "Canopy_EW"]
                     }
                 });
 
@@ -88,12 +86,6 @@ require([
                 this.view.ui.move("zoom", "top-right");
                 this.view.ui.add([home, compass], "top-right");
                 this.view.ui.add(bg_expand, "bottom-right");
-
-                this.$nextTick(() => {
-                    document.querySelectorAll(".esri-attribution__sources, .esri-attribution__link").forEach(el => {
-                        el.tabIndex = -1;
-                    });
-                });
             },
             createFilterOptions() {
                 let common_names = {};
@@ -237,6 +229,19 @@ require([
                     this.updateExtent();
                 });
             },
+            fixTabOrder() {
+                let targets = [
+                    ".esri-attribution__sources",
+                    ".esri-attribution__link",
+                    ".esri-popup__button"
+                ].join(",");
+
+                this.$nextTick(() => {
+                    document.querySelectorAll(targets).forEach(el => {
+                        el.tabIndex = -1;
+                    });
+                });
+            },
             nextTree(go_back) {
                 if ((go_back && this.tree_idx === 0) || (!go_back && this.tree_idx === this.trees.length-1)) {
                     return;
@@ -258,6 +263,7 @@ require([
                     features: [tree],
                     updateLocationEnabled: true
                 });
+                this.fixTabOrder();
                 this.popup.focus();
             },
             updateExtent() {
@@ -291,6 +297,7 @@ require([
             this.popup.watch("selectedFeature", graphic => {
                 if (graphic) {
                     this.popup.title = this.createPopupTitle();
+                    this.fixTabOrder();
                     this.popup.focus();
                 }
             });
