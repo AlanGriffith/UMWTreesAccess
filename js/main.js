@@ -145,7 +145,7 @@ require([
                 this.$refs.b_select.disabled = false;
             },
             createPopupContent() {
-                let geometry = this.popup.viewModel.selectedFeature.geometry;
+                let geometry = this.popup.selectedFeature.geometry;
                 let lat = geometry.latitude.toFixed(5);
                 let lon = geometry.longitude.toFixed(5);
 
@@ -192,13 +192,13 @@ require([
 </table>`;
             },
             createPopupTitle() {
-                let obj_id = this.popup.viewModel.selectedFeature.attributes["OBJECTID"];
+                let obj_id = this.popup.selectedFeature.attributes["OBJECTID"];
 
                 if (this.tree_idx === -1 || this.trees[this.tree_idx].attributes["OBJECTID"] !== obj_id) {
                     this.tree_idx = this.trees.findIndex(t => t.attributes["OBJECTID"] === obj_id);
                 }
 
-                return `<h1 tabindex="-1">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
+                return `<h1 tabindex="-1" aria-live="assertive">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
             },
             filterTrees() {
                 this.popup.close();
@@ -232,14 +232,14 @@ require([
                 });
             },
             fixTabOrder() {
-                let targets = [
+                let to_remove = [
                     ".esri-attribution__sources",
                     ".esri-attribution__link",
                     ".esri-popup__button"
                 ].join(",");
 
                 this.$nextTick(() => {
-                    document.querySelectorAll(targets).forEach(el => {
+                    document.querySelectorAll(to_remove).forEach(el => {
                         el.tabIndex = -1;
                     });
                 });
@@ -266,7 +266,7 @@ require([
                     updateLocationEnabled: true
                 });
                 this.fixTabOrder();
-                this.popup.focus();
+                this.view.focus();
             },
             updateExtent() {
                 return this.view.goTo(this.trees);
@@ -300,7 +300,7 @@ require([
                 if (graphic) {
                     this.popup.title = this.createPopupTitle();
                     this.fixTabOrder();
-                    this.popup.focus();
+                    this.view.focus();
                 }
             });
         }
