@@ -249,7 +249,7 @@ require([
                 }
 
                 // Return the popup title which shows the index of this tree in the trees list.
-                return `<h1 tabindex="-1" aria-live="assertive">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
+                return `<h1 tabindex="-1" role="alert" aria-live="assertive">Tree ${this.tree_idx + 1} of ${this.trees.length}</h1>`;
             },
             /**
              * Filter the trees by the current values set in the filter boxes.
