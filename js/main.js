@@ -31,14 +31,14 @@ require([
     new Vue({
         el: "main",
         data: {
-            layer: null,  // Handle to the ESRI tree feature layer.
+            layer: null,  // Handle to the ESRI trees feature layer.
             trees: [],    // List of the ESRI feature objects for each tree.
-            tree_idx: -1, // The current index in the trees list (used for keyboard navigation).
-            view: null,   // Handle to the ESRI MapView being displayed.
+            tree_idx: -1, // The current index in the trees list (used for the keyboard navigation).
+            view: null,   // Handle to the ESRI MapView which displays the trees.
         },
         computed: {
             /**
-             * The value which is displayed for the tree counter.
+             * Getter/setter for the value which is shown on the tree counter.
              */
             counter: {
                 get() {
@@ -89,7 +89,7 @@ require([
                     goToOverride: this.updateExtent
                 });
 
-                // Set up the Compass widget to show orientation.
+                // Set up the Compass widget to show current orientation.
                 let compass = new Compass({
                     view: this.view
                 });
@@ -103,17 +103,17 @@ require([
                     autoCollapse: true
                 });
 
-                // Position the widgets in the correct locations.
+                // Position the map widgets in the correct locations.
                 this.view.ui.move("zoom", "top-right");
                 this.view.ui.add([home, compass], "top-right");
                 this.view.ui.add(bg_expand, "bottom-right");
 
-                // Remove the collapse button from the popup headers so it doesn't interfere with
-                // the keyboard navigation.
+                // Remove the collapse button from the popup headers so that it doesn't interfere
+                // with the keyboard navigation.
                 this.popup.collapseEnabled = false;
             },
             /**
-             * Populate the filter boxes with values from the database.
+             * Populate the filter boxes with values from the trees database.
              */
             createFilterOptions() {
                 // These dictionaries map each filter box value to a list of tree OBJECTIDs for the
@@ -123,8 +123,8 @@ require([
                 let genus_species = {};
                 let buildings = {};
 
-                // Go through each tree feature and add its OBJECTID to the correct lists within the
-                // dictionaries above.
+                // Go through each tree feature and add its OBJECTID to the correct list(s) within
+                // the dictionaries above.
                 for (let tree of this.trees) {
                     let obj_id = tree.attributes["OBJECTID"];
 
@@ -186,15 +186,15 @@ require([
                 this.$refs.b_select.disabled = false;
             },
             /**
-             * Create the content of the current popup.
+             * Create the content for the current popup.
              */
             createPopupContent() {
-                // Compute the lat/lon of this tree.
+                // Compute the lat/lon coordinates of this tree.
                 let geometry = this.popup.selectedFeature.geometry;
                 let lat = geometry.latitude.toFixed(5);
                 let lon = geometry.longitude.toFixed(5);
 
-                // Return the data table of all the fields of interest for this tree.
+                // Return the data table of all the attributes of interest for this tree.
                 return `\
 <table class="esri-widget__table">
     <tbody>
@@ -238,10 +238,10 @@ require([
 </table>`;
             },
             /**
-             * Create a title for the current popup.
+             * Create the title for the current popup.
              */
             createPopupTitle() {
-                // Set the tree index data field to the correct value if necessary (this will be the
+                // Set the 'tree_idx' data field to the correct value if necessary (this will be the
                 // index of the currently selected tree).
                 let obj_id = this.popup.selectedFeature.attributes["OBJECTID"];
                 if (this.tree_idx === -1 || this.trees[this.tree_idx].attributes["OBJECTID"] !== obj_id) {
@@ -259,7 +259,7 @@ require([
                 this.popup.close();
                 this.counter = "...";
 
-                // A list of the expressions to filter the trees layer by.
+                // A list of the expressions by which the trees will be filtered.
                 // We always filter out removed trees, designated by a "removed" comment.
                 let filters = ["LOWER(Comment_) <> 'removed'"];
 
@@ -281,11 +281,11 @@ require([
                     filters.push(`OBJECTID IN (${b})`);
                 }
 
-                // Update the definition expression for the trees layer to filter by all of the
-                // expressions created above.
+                // Update the definition expression for the trees layer so that it filters by all of
+                // the expressions created above.
                 this.layer.definitionExpression = filters.join(" AND ");
 
-                // Rebuild the trees list and ready the application for the new data.
+                // Rebuild the trees list and ready the map for the new data.
                 this.layer.queryFeatures().then(results => {
                     this.trees = results.features;
                     this.tree_idx = -1;
@@ -295,7 +295,7 @@ require([
                 });
             },
             /**
-             * Disable the 'tabindex' attribute from specific ESRI elements so that keyboard
+             * Disable the 'tabindex' attribute from specific ESRI elements so that the keyboard
              * navigation works as expected.
              */
             fixTabOrder() {
@@ -306,7 +306,7 @@ require([
                     ".esri-popup__button"
                 ].join(",");
 
-                // After the map loads, remove the elements listed above from the tab order.
+                // After the map reloads, remove the elements listed above from the tab order.
                 this.$nextTick(() => {
                     document.querySelectorAll(to_remove).forEach(el => {
                         el.tabIndex = -1;
@@ -328,7 +328,7 @@ require([
                 if (this.tree_idx === -1) {
                     this.tree_idx = 0;
                 }
-                // Or go back one if the go_back flag is set.
+                // Otherwise, go back one if the go_back flag is set.
                 else if (go_back) {
                     --this.tree_idx;
                 }
@@ -346,12 +346,12 @@ require([
                     updateLocationEnabled: true
                 });
 
-                // These need to be called here so that keyboard navigation works as expected.
+                // These need to be called here so that the keyboard navigation works as expected.
                 this.fixTabOrder();
                 this.view.focus();
             },
             /**
-             * Update the extent of the map to show all currently visible tree features.
+             * Update the extent of the map to show all of the currently visible tree features.
              */
             updateExtent() {
                 return this.view.goTo(this.trees);
@@ -360,7 +360,7 @@ require([
         mounted() {
             this.createESRIComponents();
 
-            // Populate the trees list and ready the map for use.
+            // Initially populate the trees list and ready the map for use.
             this.layer.queryFeatures().then(results => {
                 this.trees = results.features;
                 this.counter = `${this.trees.length}`;
@@ -369,7 +369,7 @@ require([
                 this.createFilterOptions();
             });
 
-            // Bind the N/B keys for keyboard navigation so that they cycle through the trees (N
+            // Bind the N/B keys for the keyboard navigation so that they cycle through the trees (N
             // goes to the next tree and B goes back).
             document.getElementById("map").addEventListener("keyup", event => {
                 if (event.key.toLowerCase() === "n") {
@@ -392,7 +392,7 @@ require([
                 if (graphic) {
                     this.popup.title = this.createPopupTitle();
 
-                    // These need to be called here so that keyboard navigation works as expected.
+                    // These need to be called here so that the keyboard navigation works as expected.
                     this.fixTabOrder();
                     this.view.focus();
                 }
