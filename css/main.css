@@ -30,13 +30,13 @@ main:focus-within {
     width: calc(100% - 10px);
 }
 
-nav {
+#navbar {
     margin-right: calc(800px - 50%);
     position: absolute;
     z-index: 1;
 }
 
-nav div {
+#navbar div {
     background-color: lightgray;
     float: left;
     min-height: 65px;
@@ -45,34 +45,34 @@ nav div {
     padding: 10px;
 }
 
-nav h1 {
+#navbar h1 {
     margin: 0;
 }
 
-nav h2 {
+#navbar h2 {
     font-size: 1em;
     margin: 5px 0 0;
 }
 
-nav fieldset {
+#navbar fieldset {
     border: 2px solid navy;
     border-radius: 2px;
 }
 
-nav fieldset legend {
+#navbar fieldset legend {
     padding: 0 5px;
 }
 
-nav fieldset legend span {
+#navbar fieldset legend span {
     font-weight: bold;
 }
 
-nav fieldset label {
+#navbar fieldset label {
     display: inline-block;
     margin: 5px;
 }
 
-nav fieldset select {
+#navbar fieldset select {
     background-color: white;
     border: 1px solid navy;
     border-radius: 2px;
@@ -80,7 +80,7 @@ nav fieldset select {
     width: 150px
 }
 
-nav fieldset select[disabled] {
+#navbar fieldset select[disabled] {
     background-color: gray;
 }
 

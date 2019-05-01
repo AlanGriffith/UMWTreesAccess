@@ -358,9 +358,14 @@ require([
             }
         },
         mounted() {
+            // Start the keyboard navigation on the navbar.
+            // If screen reading is enabled, this also begins reading the usage instructions.
+            document.getElementById("navbar").focus();
+
+            // Must be called first before any ArcGIS API stuff is used.
             this.createESRIComponents();
 
-            // Initially populate the trees list and ready the map for use.
+            // Initially populate the trees list and then ready the map for use.
             this.layer.queryFeatures().then(results => {
                 this.trees = results.features;
                 this.counter = `${this.trees.length}`;
