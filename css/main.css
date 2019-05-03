@@ -31,7 +31,7 @@ main:focus-within {
 }
 
 #navbar {
-    margin-right: calc(800px - 50%);
+    margin-right: calc(825px - 50%);
     position: absolute;
     z-index: 1;
 }

@@ -14,7 +14,7 @@
 const FEATURE_LAYER = "https://services3.arcgis.com/eyU1lVcSnKSGItET/arcgis/rest/services/Heritage_Online_Manage_noedit_WFL1/FeatureServer/0";
 
 // The lat/lon coordinates of UMW on which to center the map.
-const MAP_CENTER = [-77.47432149070814, 38.30174598000295];
+const MAP_CENTER = [-77.4743346820189, 38.3018069459446];
 
 // The initial zoom level of the map.
 const MAP_ZOOM = 16;
@@ -354,7 +354,10 @@ require([
              * Update the extent of the map to show all of the currently visible tree features.
              */
             updateExtent() {
-                return this.view.goTo(this.trees);
+                return this.view.goTo({
+                    target: this.trees,
+                    zoom: MAP_ZOOM
+                });
             }
         },
         mounted() {
