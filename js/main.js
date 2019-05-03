@@ -63,7 +63,7 @@ require([
                 // Set up the trees feature layer.
                 this.layer = new FeatureLayer({
                     url: FEATURE_LAYER,
-                    definitionExpression: "LOWER(Comment_) <> 'removed'",
+                    definitionExpression: "LOWER(Comment_) NOT LIKE 'removed%'",
                     popupTemplate: {
                         title: this.createPopupTitle,
                         content: this.createPopupContent,
@@ -260,8 +260,8 @@ require([
                 this.counter = "...";
 
                 // A list of the expressions by which the trees will be filtered.
-                // We always filter out removed trees, designated by a "removed" comment.
-                let filters = ["LOWER(Comment_) <> 'removed'"];
+                // We always filter out removed trees, marked by a comment starting wth "removed".
+                let filters = ["LOWER(Comment_) NOT LIKE 'removed%'"];
 
                 // If there is a specific Common Name set, add it as a filter.
                 let cn = this.$refs.cn_select.value;
