@@ -105,8 +105,7 @@ require([
 
                 // Position the map widgets in the correct locations.
                 this.view.ui.move("zoom", "top-right");
-                this.view.ui.add([home, compass], "top-right");
-                this.view.ui.add(bg_expand, "bottom-right");
+                this.view.ui.add([home, compass, bg_expand], "top-right");
 
                 // Remove the collapse button from the popup headers so that it doesn't interfere
                 // with the keyboard navigation.
@@ -184,6 +183,17 @@ require([
                 this.$refs.cn_select.disabled = false;
                 this.$refs.gs_select.disabled = false;
                 this.$refs.b_select.disabled = false;
+            },
+            /**
+             * Add an accessibility statement and link to NVDA along with the ESRI attribution text.
+             */
+            createNVDALink() {
+                let attr = document.getElementsByClassName("esri-attribution__powered-by")[0];
+                attr.innerHTML = `\
+<aside tabindex="1"><i>This application was successfully tested for accessibility using the <a tabindex="1" href="https://www.nvaccess.org/">NVDA screen reader</a>.</i></aside>
+<div>
+    ${attr.innerHTML}
+</div>`;
             },
             /**
              * Create the content for the current popup.
@@ -374,6 +384,7 @@ require([
                 this.counter = `${this.trees.length}`;
 
                 this.updateExtent();
+                this.createNVDALink();
                 this.createFilterOptions();
             });
 
